@@ -62,7 +62,7 @@ class Details extends Component {
               <div>
                 <h1>Would you like to adopt {name}</h1>
                 <button onClick={this.adopt}>Yes</button>
-                <button onClick={this.toggleModal}>Yes</button>
+                <button onClick={this.toggleModal}>No</button>
               </div>
             </Modal>
           ) : null}
