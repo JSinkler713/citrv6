@@ -6,6 +6,8 @@ import changeLocation from './actionCreators/changeLocation'
 import changeAnimal from './actionCreators/changeAnimal'
 import changeBreed from './actionCreators/changeBreed'
 import changeTheme from './actionCreators/changeTheme'
+import { fetchAnimals } from './actionCreators/fetchAnimals' 
+
 const ANIMALS = ["bird", "cat", "dog", "rabbit", "turtle"];
 
 const SearchParams = () => {
@@ -13,7 +15,9 @@ const SearchParams = () => {
   const location = useSelector(state=> state.location)
   const theme = useSelector(state=> state.theme)
   const breed = useSelector(state=> state.breed)
-  const [pets, setPets] = useState([]);
+  // use redux-observable to handle async fetch requests
+  const pets = useSelector(state => state.animals)
+  // const [pets, setPets] = useState([]);
   const [breeds] = useBreedList(animal)
   const dispatch = useDispatch();
   
@@ -23,13 +27,6 @@ const SearchParams = () => {
   }, []) //eslint-disable-line react-hooks/exhaustive-deps
 
   /*
-  useEffect(()=> {
-    const timer = setTimeout(()=> alert('hi'), 2000)
-    // the cleanup function gets called when we remove the component from the page
-    return ()=> clearTimeout(timer)
-  })
-  */
-
   async function requestPets() {
     let res = await fetch(`http://pets-v2.dev-apis.com/pets?animal=${animal}&location=${location}&breed=${breed}`);
     res = await res.json()
@@ -37,6 +34,14 @@ const SearchParams = () => {
     setPets(res.pets)
 
   }
+  */
+  function requestPets() {
+    //call action { FETCH_ANIMALS }
+    dispatch(fetchAnimals())
+    // epic will pick up and call { FETCH_ANIMALS_FULFILLED } after ajax request
+
+  }
+  
   const handleChange = (e) => {
     dispatch(changeLocation(e.target.value))
   };
@@ -45,12 +50,6 @@ const SearchParams = () => {
     dispatch(changeBreed(""))
     dispatch(changeAnimal(e.target.value))
   }
-
-  /*
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-  */
 
   return (
     <div className="search-params">

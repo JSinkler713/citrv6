@@ -1,11 +1,18 @@
-import { createStore } from 'redux';
+import { compose, createStore, applyMiddleware } from 'redux';
 import reducer from './reducer'
 
+import  { createEpicMiddleware } from 'redux-observable';
+import rootEpic from './fetch-animals-epic'
 
-const store = createStore(reducer,
-  typeof window === 'object' && typeof window.__REDUX_DEVTOOLS_EXTENSION__ !== 'undefined'
-  ? window.__REDUX_DEVTOOLS_EXTENSION__()
-  : (f) => f
-);
+const epicMiddleware = createEpicMiddleware()
+
+const store = createStore(reducer, 
+  compose(
+    applyMiddleware(epicMiddleware),
+    window.devToolsExtension ? window.devToolsExtension() : f => f
+  )
+)
+
+epicMiddleware.run(rootEpic)
 
 export default store;
